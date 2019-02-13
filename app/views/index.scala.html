@@ -1,11 +1,5 @@
-@(message:String, myform: Form[MyForm.Data])(implicit request: MessagesRequestHeader)
+@(message:String )
 
 @main("Index Page", "Hello", "copyright 2018.") {
-  <p>@message</p>
-  @helper.form(action=routes.HomeController.form) {
-    @helper.CSRF.formField
-    @helper.inputText(myform("name"))
-    @helper.inputPassword(myform("password"))
-    <button>send form</button>
-  }
+<p>@Html(message)</p>
 }
