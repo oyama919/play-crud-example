@@ -1,26 +1,26 @@
 package controllers
 
+import controllers.MyForm._
 import javax.inject._
 import play.api.mvc._
 
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
-
-  def index() = Action {
+class HomeController @Inject()(cc: MessagesControllerComponents)
+    extends MessagesAbstractController(cc) {
+  def index() = Action {implicit request =>
     Ok(views.html.index(
-      "this is form message",
+      "Please Write name and pass",
+      myform
     ))
   }
 
-
-  def form() = Action { request =>
-    val form:Option[Map[String,Seq[String]]] =
-      request.body.asFormUrlEncoded
-    val param:Map[String,Seq[String]] = form.getOrElse(Map())
-    val name:String = param.get("name").get(0)
-    val password:String = param.get("pass").get(0)
+  def form() = Action { implicit request =>
+    val form = myform.bindFromRequest
+    println(form.data)
+    val data = form.data
     Ok(views.html.index(
-      "name:" + name + ", password:" + password
+      "name:" + data.get("name").getOrElse("") + ", pass:" + data.get("password").getOrElse(""),
+      form
     ))
   }
 }
