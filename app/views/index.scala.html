@@ -1,7 +1,27 @@
-@()
-@main("Index Page", "Hello", "copyright 2018.") {
-  <p>Welcome to Play!</p>
-  <p>show sample page</p>
+@(message:String)
+
+
+@makeForm = {
+  <form method="post" action="/form">
+    <table>
+      <tr>
+        <th>Name</th>
+        <td><input type="text" name="name"></td>
+      </tr>
+      <tr>
+        <th>Pass</th>
+        <td><input type="password" name="pass"></td>
+      </tr>
+      <tr>
+        <th></th>
+        <td><input type="submit" value="send form"></td>
+      </tr>
+    </table>
+  </form>
 }
 
 
+@main("Index Page", "Hello", "copyright 2018.") {
+  <p>@message</p>
+  @makeForm
+}
