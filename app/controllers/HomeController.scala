@@ -21,6 +21,14 @@ class HomeController @Inject()(repository: PersonRepository,
     }
   }
 
+  def show(id:Int) = Action.async {implicit request =>
+    repository.get(id).map { person =>
+      Ok(views.html.show(
+        "People Data.", person
+      ))
+    }
+  }
+
   def add() = Action {implicit request =>
     Ok(views.html.add(
       "フォームを記入して下さい。",
