@@ -29,4 +29,9 @@ class PersonRepository @Inject()
   def list(): Future[Seq[Person]] = db.run {
     people.result
   }
+
+  def create(name: String, mail:String, tel:String):Future[Int] =
+    db.run(
+      people += Person(0, name, mail, tel)
+    )
 }
