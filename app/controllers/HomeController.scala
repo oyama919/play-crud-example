@@ -74,4 +74,18 @@ class HomeController @Inject()(repository: PersonRepository,
       }
     )
   }
+
+  def delete(id:Int) = Action.async {implicit request =>
+    repository.get(id).map { person =>
+      Ok(views.html.delete(
+        "Delete Person.", person, id
+      ))
+    }
+  }
+
+  def remove(id:Int) = Action.async {implicit request =>
+    repository.delete(id).map { _ =>
+      Redirect(routes.HomeController.index)
+    }
+  }
 }
