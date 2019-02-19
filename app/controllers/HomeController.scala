@@ -3,6 +3,7 @@ package controllers
 
 import javax.inject._
 import models._
+import play.api.data.Form
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,4 +51,27 @@ class HomeController @Inject()(repository: PersonRepository,
     )
   }
 
+  def edit(id:Int) = Action.async {implicit request =>
+    repository.get(id).map { person =>
+      val fdata:Form[PersonForm] = Person.personForm
+        .fill(models.PersonForm(person.name, person.mail, person.tel))
+      Ok(views.html.edit(
+        "Edit Person.", fdata, id
+      ))
+    }
+  }
+
+
+  def update(id:Int) = Action.async { implicit request =>
+    Person.personForm.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(Ok(views.html.edit("error.", errorForm, id)))
+      },
+      person => {
+        repository.update(id, person.name, person.mail, person.tel).map { _ =>
+          Redirect(routes.HomeController.index)
+        }
+      }
+    )
+  }
 }

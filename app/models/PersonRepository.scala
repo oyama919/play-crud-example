@@ -38,4 +38,10 @@ class PersonRepository @Inject()
     db.run(
       people += Person(0, name, mail, tel)
     )
+
+  def update(id:Int, name: String, mail:String, tel:String):Future[Int] = {
+    db.run(
+      people.insertOrUpdate(Person(id, name, mail, tel))
+    )
+  }
 }
