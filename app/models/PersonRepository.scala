@@ -50,4 +50,8 @@ class PersonRepository @Inject()
       people.filter(_.id === id).delete
     )
   }
+
+  def find(s:String): Future[Seq[Person]] = db.run {
+    people.filter(_.name.like("%" + s + "%")).result
+  }
 }

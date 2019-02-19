@@ -88,4 +88,26 @@ class HomeController @Inject()(repository: PersonRepository,
       Redirect(routes.HomeController.index)
     }
   }
+
+  def find() = Action {implicit request =>
+    Ok(views.html.find(
+      "Find Data.", Person.personFind, Seq[Person]()
+    ))
+  }
+
+
+  def search() = Action.async {implicit request =>
+    Person.personFind.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(Ok(views.html.find("error.", errorForm, Seq[Person]())))
+      },
+      find => {
+        repository.find(find.find).map { result =>
+          Ok(views.html.find(
+            "Find: " + find.find, Person.personFind, result
+          ))
+        }
+      }
+    )
+  }
 }
