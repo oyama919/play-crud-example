@@ -1,42 +1,44 @@
 package controllers
 
-
 import javax.inject._
 import models._
 import play.api.data.Form
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
-
-
 @Singleton
-class HomeController @Inject()(repository: PersonRepository,
-  cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
-  extends MessagesAbstractController(cc) {
+class HomeController @Inject()(
+    repository: PersonRepository,
+    cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
+    extends MessagesAbstractController(cc) {
 
-  def index() = Action.async {implicit request =>
+  def index() = Action.async { implicit request =>
     repository.list().map { people =>
-      Ok(views.html.index(
-        "People Data.", people
-      ))
+      Ok(
+        views.html.index(
+          "People Data.",
+          people
+        ))
     }
   }
 
-  def show(id:Int) = Action.async {implicit request =>
+  def show(id: Int) = Action.async { implicit request =>
     repository.get(id).map { person =>
-      Ok(views.html.show(
-        "People Data.", person
-      ))
+      Ok(
+        views.html.show(
+          "People Data.",
+          person
+        ))
     }
   }
 
-  def add() = Action {implicit request =>
-    Ok(views.html.add(
-      "フォームを記入して下さい。",
-      Person.personForm
-    ))
+  def add() = Action { implicit request =>
+    Ok(
+      views.html.add(
+        "フォームを記入して下さい。",
+        Person.personForm
+      ))
   }
-
 
   def create() = Action.async { implicit request =>
     Person.personForm.bindFromRequest.fold(
@@ -51,18 +53,20 @@ class HomeController @Inject()(repository: PersonRepository,
     )
   }
 
-  def edit(id:Int) = Action.async {implicit request =>
+  def edit(id: Int) = Action.async { implicit request =>
     repository.get(id).map { person =>
-      val fdata:Form[PersonForm] = Person.personForm
+      val fdata: Form[PersonForm] = Person.personForm
         .fill(models.PersonForm(person.name, person.mail, person.tel))
-      Ok(views.html.edit(
-        "Edit Person.", fdata, id
-      ))
+      Ok(
+        views.html.edit(
+          "Edit Person.",
+          fdata,
+          id
+        ))
     }
   }
 
-
-  def update(id:Int) = Action.async { implicit request =>
+  def update(id: Int) = Action.async { implicit request =>
     Person.personForm.bindFromRequest.fold(
       errorForm => {
         Future.successful(Ok(views.html.edit("error.", errorForm, id)))
@@ -75,37 +79,46 @@ class HomeController @Inject()(repository: PersonRepository,
     )
   }
 
-  def delete(id:Int) = Action.async {implicit request =>
+  def delete(id: Int) = Action.async { implicit request =>
     repository.get(id).map { person =>
-      Ok(views.html.delete(
-        "Delete Person.", person, id
-      ))
+      Ok(
+        views.html.delete(
+          "Delete Person.",
+          person,
+          id
+        ))
     }
   }
 
-  def remove(id:Int) = Action.async {implicit request =>
+  def remove(id: Int) = Action.async { implicit request =>
     repository.delete(id).map { _ =>
       Redirect(routes.HomeController.index)
     }
   }
 
-  def find() = Action {implicit request =>
-    Ok(views.html.find(
-      "Find Data.", Person.personFind, Seq[Person]()
-    ))
+  def find() = Action { implicit request =>
+    Ok(
+      views.html.find(
+        "Find Data.",
+        Person.personFind,
+        Seq[Person]()
+      ))
   }
 
-
-  def search() = Action.async {implicit request =>
+  def search() = Action.async { implicit request =>
     Person.personFind.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok(views.html.find("error.", errorForm, Seq[Person]())))
+        Future.successful(
+          Ok(views.html.find("error.", errorForm, Seq[Person]())))
       },
       find => {
         repository.find(find.find).map { result =>
-          Ok(views.html.find(
-            "Find: " + find.find, Person.personFind, result
-          ))
+          Ok(
+            views.html.find(
+              "Find: " + find.find,
+              Person.personFind,
+              result
+            ))
         }
       }
     )
