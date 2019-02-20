@@ -51,7 +51,9 @@ class PersonRepository @Inject()
     )
   }
 
-  def find(s:String): Future[Seq[Person]] = db.run {
-    people.filter(_.name.like("%" + s + "%")).result
+  def find(s: String): Future[Seq[Person]] = db.run {
+    people
+      .filter(p => (p.name like "%" + s + "%") || (p.mail like "%" + s + "%"))
+      .result
   }
 }
