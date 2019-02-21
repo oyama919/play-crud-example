@@ -1,9 +1,9 @@
 package controllers
 
 import javax.inject._
-import models._
 import play.api.data.Form
 import play.api.mvc._
+import models._
 
 import scala.concurrent.{ExecutionContext, Future}
 @Singleton
@@ -36,12 +36,12 @@ class HomeController @Inject()(
     Ok(
       views.html.add(
         "フォームを記入して下さい。",
-        Person.personForm
+        PersonForm.form
       ))
   }
 
   def create() = Action.async { implicit request =>
-    Person.personForm.bindFromRequest.fold(
+    PersonForm.form.bindFromRequest.fold(
       errorForm => {
         Future.successful(Ok(views.html.add("error.", errorForm)))
       },
@@ -55,8 +55,8 @@ class HomeController @Inject()(
 
   def edit(id: Int) = Action.async { implicit request =>
     repository.get(id).map { person =>
-      val fdata: Form[PersonForm] = Person.personForm
-        .fill(models.PersonForm(person.name, person.mail, person.tel))
+      val fdata: Form[PersonForm] = PersonForm.form
+        .fill(PersonForm(person.name, person.mail, person.tel))
       Ok(
         views.html.edit(
           "Edit Person.",
@@ -67,7 +67,7 @@ class HomeController @Inject()(
   }
 
   def update(id: Int) = Action.async { implicit request =>
-    Person.personForm.bindFromRequest.fold(
+    PersonForm.form.bindFromRequest.fold(
       errorForm => {
         Future.successful(Ok(views.html.edit("error.", errorForm, id)))
       },
@@ -100,13 +100,13 @@ class HomeController @Inject()(
     Ok(
       views.html.find(
         "Find Data.",
-        Person.personFind,
+        PersonForm.findForm,
         Seq[Person]()
       ))
   }
 
   def search() = Action.async { implicit request =>
-    Person.personFind.bindFromRequest.fold(
+    PersonForm.findForm.bindFromRequest.fold(
       errorForm => {
         Future.successful(
           Ok(views.html.find("error.", errorForm, Seq[Person]())))
@@ -116,7 +116,7 @@ class HomeController @Inject()(
           Ok(
             views.html.find(
               "Find: " + find.find,
-              Person.personFind,
+              PersonForm.findForm,
               result
             ))
         }
