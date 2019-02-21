@@ -12,11 +12,11 @@ object PersonForm {
         .verifying(error = "３文字以上入力してください", constraint = 3 <= _.length)
         .verifying(error = "10文字以内入力してください", constraint = _.length <= 10),
       "mail" -> t
-        .verifying(error = "メールアドレスを入力してくださいgi",
+        .verifying(error = "メールアドレスを入力してください",
                    constraint =
                      _.matches("""([a-zA-Z0-9\.\_-]+)@([a-zA-Z0-9\.\_-]+)""")),
       "tel" -> t
-        .verifying(error = "半角の数値とハイフンのみ入力可。",
+        .verifying(error = "半角の数値とハイフンのみで入力してください",
                    constraint = _.matches("""[1-9-]+"""))
     )(PersonForm.apply)(PersonForm.unapply)
   }
