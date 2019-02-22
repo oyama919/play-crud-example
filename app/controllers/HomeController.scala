@@ -1,14 +1,15 @@
 package controllers
 
 import javax.inject._
+import models._
 import play.api.data.Form
 import play.api.mvc._
-import models._
-
 import scala.concurrent.{ExecutionContext, Future}
+
 @Singleton
 class HomeController @Inject()(
     repository: PersonRepository,
+    repository2: MessageRepository,
     cc: MessagesControllerComponents)(implicit ec: ExecutionContext)
     extends MessagesAbstractController(cc) {
 
@@ -119,6 +120,33 @@ class HomeController @Inject()(
               PersonForm.findForm,
               result
             ))
+        }
+      }
+    )
+  }
+
+  def message() = Action.async {implicit request =>
+    repository2.listMsgWithP().map { messages =>
+      Ok(views.html.message(
+        "Message List.",
+        MessageForm.form, messages
+      ))
+    }
+  }
+
+  def addmessage() = Action.async {implicit request =>
+    MessageForm.form.bindFromRequest.fold(
+      errorForm => {
+        repository2.listMsgWithP().map { messages =>
+          Ok(views.html.message(
+            "ERROR.",
+            errorForm, messages
+          ))
+        }
+      },
+      message => {
+        repository2.createMsg(message.personId, message.message).map { _ =>
+          Redirect(routes.HomeController.message)
         }
       }
     )
